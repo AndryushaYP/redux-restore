@@ -1,21 +1,50 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import "./BooksList.css";
 import BookItem from "../BookItem/BookItem";
 import WithBookstoreService from "../hoc/WithBookstoreService";
-import { booksLoaded } from "../../actions/actions";
+import { fetchBooks } from "../../actions/actions";
+import Loader from "../Loader/Loader";
+import ErrorIndicator from "../error-indicator/ErrorIndicator";
 
-class BooksList extends Component {
+const BooksList = (props) => {
+  const { books, loading, error } = props;
+  console.log(props);
+  React.useEffect(() => {
+    props.fetchBooks();
+  }, []);
+
+  return (
+    <>
+      {loading && <Loader />}
+      {error && <ErrorIndicator />}
+
+      {!loading && !error && (
+        <ul className="books-list">
+          {books.map((book) => (
+            <BookItem key={book.id} book={book} />
+          ))}
+        </ul>
+      )}
+    </>
+  );
+};
+
+/* class BooksList extends Component {
   componentDidMount() {
-    const { bookstoreService } = this.props;
-    const data = bookstoreService.getBooks();
-
-    this.props.booksLoaded(data);
+    this.props.fetchBooks();
   }
 
   render() {
-    const { books } = this.props;
-    console.log(this.props);
+    const { books, loading, error } = this.props;
+    if (loading) {
+      return <Loader />;
+    }
+
+    if (error) {
+      return <ErrorIndicator />;
+    }
+
     return (
       <ul className="books-list">
         {books.map((book) => (
@@ -24,14 +53,16 @@ class BooksList extends Component {
       </ul>
     );
   }
-}
+} */
 
-const mapStateToProps = ({ books }) => {
-  return { books };
+const mapStateToProps = ({ books, loading, error }) => {
+  return { books, loading, error };
 };
 
-const mapDispatchToProps = {
-  booksLoaded,
+const mapDispatchToProps = (dispatch, { bookstoreService }) => {
+  return {
+    fetchBooks: fetchBooks(dispatch, bookstoreService),
+  };
 };
 
 export default WithBookstoreService()(connect(mapStateToProps, mapDispatchToProps)(BooksList));

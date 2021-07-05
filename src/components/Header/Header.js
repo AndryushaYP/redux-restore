@@ -1,16 +1,17 @@
 import React from "react";
 import "./Header.css";
+import { Link } from "react-router-dom";
 
 const Header = ({ sum, quantity }) => {
   return (
     <header className="shop-header row">
-      <a className="logo text-dark" href="#">
+      <Link to="/" className="logo text-dark">
         ReStore
-      </a>
-      <a className="shopping-cart" href="#">
+      </Link>
+      <Link to="/cart" className="shopping-cart">
         <i className="cart-icon fa fa-shopping-cart" />
         {quantity} items (${sum})
-      </a>
+      </Link>
     </header>
   );
 };
