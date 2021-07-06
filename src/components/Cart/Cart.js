@@ -60,7 +60,7 @@ const Cart = ({ items, total, onIncrease, onDecrease, onDelete }) => {
   );
 };
 
-const mapStateToProps = ({ cartItems, totalPrice }) => {
+const mapStateToProps = ({ shopingCart: { cartItems, totalPrice } }) => {
   return {
     items: cartItems,
     total: totalPrice,

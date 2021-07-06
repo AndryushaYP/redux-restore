@@ -31,32 +31,7 @@ const BooksListContainer = ({ books, loading, error, onAddedToCart, fetchBooks }
   );
 };
 
-/* class BooksList extends Component {
-  componentDidMount() {
-    this.props.fetchBooks();
-  }
-
-  render() {
-    const { books, loading, error } = this.props;
-    if (loading) {
-      return <Loader />;
-    }
-
-    if (error) {
-      return <ErrorIndicator />;
-    }
-
-    return (
-      <ul className="books-list">
-        {books.map((book) => (
-          <BookItem key={book.id} book={book} />
-        ))}
-      </ul>
-    );
-  }
-} */
-
-const mapStateToProps = ({ books, loading, error }) => {
+const mapStateToProps = ({ bookList: { books, loading, error } }) => {
   return { books, loading, error };
 };
 
