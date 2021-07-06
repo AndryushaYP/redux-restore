@@ -7,21 +7,37 @@ const initialState = {
 };
 
 const updateCartItems = (cartItems, item, id) => {
+  if (item.count === 0) {
+    return [...cartItems.slice(0, id), ...cartItems.slice(id + 1)];
+  }
   if (id === -1) {
     return [...cartItems, item];
   }
   return [...cartItems.slice(0, id), item, ...cartItems.slice(id + 1)];
 };
 
-const updateItem = (item = {}, book) => {
+const updateItem = (item = {}, book, quantity) => {
   const { id = book.id, title = book.title, count = 0, price = book.price, total = 0 } = item;
-  console.log(title);
   return {
     id,
     title,
     price,
-    count: count + 1,
-    total: total + price,
+    count: count + quantity,
+    total: total + quantity * price,
+  };
+};
+
+const updateOrder = (state, id, quantity) => {
+  const { books, cartItems } = state;
+  const bookId = id;
+  const book = books.find((item) => item.id === bookId);
+  const findIdx = cartItems.findIndex(({ id }) => id === bookId);
+  const item = cartItems[findIdx];
+  const newItem = updateItem(item, book, quantity);
+
+  return {
+    ...state,
+    cartItems: updateCartItems(cartItems, newItem, findIdx),
   };
 };
 
@@ -52,15 +68,14 @@ const reducer = (state = initialState, action) => {
       };
 
     case "BOOK_ADDED_TO_CART":
-      const bookId = action.payload;
-      const book = state.books.find((item) => item.id === bookId);
-      const findIdx = state.cartItems.findIndex(({ id }) => id === bookId);
-      const item = state.cartItems[findIdx];
+      return updateOrder(state, action.payload, 1);
 
-      return {
-        ...state,
-        cartItems: updateCartItems(state.cartItems, updateItem(item, book), findIdx),
-      };
+    case "BOOK_REMOVED_FROM_CART":
+      return updateOrder(state, action.payload, -1);
+
+    case "ALL_BOOKS_REMOVED_FROM_CART":
+      const book = state.cartItems.find((item) => item.id === action.payload);
+      return updateOrder(state, action.payload, -book.count);
 
     default:
       return state;
