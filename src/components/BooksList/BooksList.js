@@ -10,18 +10,16 @@ import ErrorIndicator from "../error-indicator/ErrorIndicator";
 const BooksList = ({ books, onAddedToCart }) => {
   return (
     <ul className="books-list">
-      {books.map((book) => (
-        <BookItem key={book.id} book={book} onAddedToCart={() => onAddedToCart(book.id)} />
+      {books.map((book, id) => (
+        <BookItem key={id} book={book} onAddedToCart={() => onAddedToCart(book.id)} />
       ))}
     </ul>
   );
 };
 
-const BooksListContainer = (props) => {
-  const { books, loading, error, onAddedToCart } = props;
-  console.log(props);
+const BooksListContainer = ({ books, loading, error, onAddedToCart, fetchBooks }) => {
   React.useEffect(() => {
-    props.fetchBooks();
+    fetchBooks();
   }, []);
 
   return (

@@ -7,7 +7,7 @@ const Cart = ({ items, total, onIncrease, onDecrease, onDelete }) => {
     return items.map((item) => (
       <tr key={item.id}>
         <td>{item.id}</td>
-        <td>{item.name}</td>
+        <td>{item.title}</td>
         <td>{item.count}</td>
         <td>{item.total}</td>
         <td className="button-container">
