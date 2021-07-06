@@ -1,7 +1,35 @@
 import React from "react";
 import "./Cart.css";
+import { connect } from "react-redux";
 
-const Cart = () => {
+const Cart = ({ items, total, onIncrease, onDecrease, onDelete }) => {
+  const renderRow = () => {
+    return items.map((item) => (
+      <tr key={item.id}>
+        <td>{item.id}</td>
+        <td>{item.name}</td>
+        <td>{item.count}</td>
+        <td>{item.total}</td>
+        <td className="button-container">
+          <button className="btn btn-outline-danger btn-sm float-right" onClick={() => onDelete()}>
+            Del
+          </button>
+          <button
+            className="btn btn-outline-success btn-sm float-right"
+            onClick={() => onIncrease()}
+          >
+            +
+          </button>
+          <button
+            className="btn btn-outline-warning btn-sm float-right"
+            onClick={() => onDecrease()}
+          >
+            -
+          </button>
+        </td>
+      </tr>
+    ));
+  };
   return (
     <div className="shopping-cart-table">
       <h2>Your Order</h2>
@@ -16,24 +44,33 @@ const Cart = () => {
           </tr>
         </thead>
 
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Site Reliability Engineering</td>
-            <td>2</td>
-            <td>$40</td>
-            <td className="button-container">
-              <button className="btn btn-outline-danger btn-sm float-right">Del</button>
-              <button className="btn btn-outline-success btn-sm float-right">+</button>
-              <button className="btn btn-outline-warning btn-sm float-right">-</button>
-            </td>
-          </tr>
-        </tbody>
+        <tbody>{renderRow().map((item) => item)}</tbody>
       </table>
 
-      <div className="total">Total: $201</div>
+      <div className="total">Total: {total}</div>
     </div>
   );
 };
 
-export default Cart;
+const mapStateToProps = ({ cartItems, totalPrice }) => {
+  return {
+    items: cartItems,
+    total: totalPrice,
+  };
+};
+
+const mapDispatchToProps = ({ onIncrease, onDecrease, onDelete }) => {
+  return {
+    onIncrease: () => {
+      console.log("Плюс!");
+    },
+    onDecrease: () => {
+      console.log("Минус!");
+    },
+    onDelete: () => {
+      console.log("Delete!");
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);

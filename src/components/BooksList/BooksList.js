@@ -3,12 +3,22 @@ import { connect } from "react-redux";
 import "./BooksList.css";
 import BookItem from "../BookItem/BookItem";
 import WithBookstoreService from "../hoc/WithBookstoreService";
-import { fetchBooks } from "../../actions/actions";
+import { fetchBooks, bookAddedToCart } from "../../actions/actions";
 import Loader from "../Loader/Loader";
 import ErrorIndicator from "../error-indicator/ErrorIndicator";
 
-const BooksList = (props) => {
-  const { books, loading, error } = props;
+const BooksList = ({ books, onAddedToCart }) => {
+  return (
+    <ul className="books-list">
+      {books.map((book) => (
+        <BookItem key={book.id} book={book} onAddedToCart={() => onAddedToCart(book.id)} />
+      ))}
+    </ul>
+  );
+};
+
+const BooksListContainer = (props) => {
+  const { books, loading, error, onAddedToCart } = props;
   console.log(props);
   React.useEffect(() => {
     props.fetchBooks();
@@ -18,14 +28,7 @@ const BooksList = (props) => {
     <>
       {loading && <Loader />}
       {error && <ErrorIndicator />}
-
-      {!loading && !error && (
-        <ul className="books-list">
-          {books.map((book) => (
-            <BookItem key={book.id} book={book} />
-          ))}
-        </ul>
-      )}
+      {!loading && !error && <BooksList books={books} onAddedToCart={onAddedToCart} />}
     </>
   );
 };
@@ -62,7 +65,10 @@ const mapStateToProps = ({ books, loading, error }) => {
 const mapDispatchToProps = (dispatch, { bookstoreService }) => {
   return {
     fetchBooks: fetchBooks(dispatch, bookstoreService),
+    onAddedToCart: (id) => dispatch(bookAddedToCart(id)),
   };
 };
 
-export default WithBookstoreService()(connect(mapStateToProps, mapDispatchToProps)(BooksList));
+export default WithBookstoreService()(
+  connect(mapStateToProps, mapDispatchToProps)(BooksListContainer)
+);
